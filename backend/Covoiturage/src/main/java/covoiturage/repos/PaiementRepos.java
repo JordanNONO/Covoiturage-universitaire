@@ -6,12 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import covoiturage.entities.Utilisateur;
+import covoiturage.entities.Paiement;
 
 @Repository
-public interface UtilisateurRepos extends JpaRepository<Utilisateur, String> {
-	
-	@Query("SELECT u FROM Utilisateur u WHERE u.nom LIKE %:label%")
-	List<Utilisateur> searchByNomUtilisateur(@Param("label") String label);
+public interface PaiementRepos extends JpaRepository<Paiement, String> {
 
 }
