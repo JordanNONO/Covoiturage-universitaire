@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package covoiturage.entities;
+package com.covoiturage.entities;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -78,6 +78,30 @@ public class Utilisateur implements Serializable {
     private Collection<Reservation> reservationCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "utilisateurIdAsso4")
     private Collection<Messagerie> messagerieCollection;
+    @Column(name = "OTP")
+    private String otp;  // Pour stocker l'OTP
+
+    @Column(name = "OTP_EXPIRATION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date otpExpiration;  // Pour stocker la date d'expiration de l'OTP
+
+    // ... constructeurs, getters et setters pour les autres champs ...
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public Date getOtpExpiration() {
+        return otpExpiration;
+    }
+
+    public void setOtpExpiration(Date otpExpiration) {
+        this.otpExpiration = otpExpiration;
+    }
 
     public Utilisateur() {
     }

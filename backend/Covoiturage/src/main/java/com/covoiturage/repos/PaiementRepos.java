@@ -1,14 +1,16 @@
-package covoiturage.repos;
+package com.covoiturage.repos;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import covoiturage.entities.Paiement;
+import com.covoiturage.entities.Paiement;
 
 @Repository
 public interface PaiementRepos extends JpaRepository<Paiement, String> {
-
+//    List<Paiement> findByReservationId(String utilisateurId);
+    
 }
+	
