@@ -15,7 +15,7 @@ import '../models/model_on_boarding.dart';
 import 'on_boading_screen_widget.dart';
 
 class OnBoardingScreen extends StatefulWidget {
-   const OnBoardingScreen({Key? key}) : super(key: key);
+  const OnBoardingScreen({Key? key}) : super(key: key);
 
   @override
   State<OnBoardingScreen> createState() => _OnBoardingScreenState();
@@ -24,12 +24,12 @@ class OnBoardingScreen extends StatefulWidget {
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final controller = LiquidController();
 
-  int currentPage=0;
+  int currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
-    final size=MediaQuery.of(context).size;
-    final pages=[
+    final size = MediaQuery.of(context).size;
+    final pages = [
       OnBoardingPageWidget(
         model: OnBoardingModel(
           image: tOnboardingImagePage2,
@@ -38,100 +38,93 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           counterText: tOnBoardingCounter1,
           height: size.height,
           bgColor: appcolor,
-
         ),
       ),
       OnBoardingPageWidget(
         model: OnBoardingModel(
           image: tOnboardingImagePage2,
           title: tOnBoardingTitle2,
-          subTitle:"",
+          subTitle: "",
           counterText: tOnBoardingCounter2,
           height: size.height,
           bgColor: tOnBoardingPage2Color,
-
         ),
       ),
       OnBoardingPageWidget(
         model: OnBoardingModel(
           image: tOnboardingImagePage3,
           title: tOnBoardingTitle3,
-          subTitle:"",
+          subTitle: "",
           counterText: tOnBoardingCounter3,
           height: size.height,
           bgColor: tOnBoardingPage3Color,
-
         ),
       ),
     ];
 
     return Scaffold(
-
       body: Stack(
-      alignment: Alignment.center,
-
+        alignment: Alignment.center,
         children: [
           LiquidSwipe(
-              pages:pages,
+            pages: pages,
             liquidController: controller,
-            onPageChangeCallback:onPageChangefCallback ,
+            onPageChangeCallback: onPageChangefCallback,
             slideIconWidget: Icon(Icons.arrow_back_ios),
             enableSideReveal: true,
-
           ),
           Positioned(
             bottom: 60.0,
             child: OutlinedButton(
-              onPressed: (){
-                int nexPage= controller.currentPage+1;
-                  controller.animateToPage(page: nexPage);
+              onPressed: () {
+                int nexPage = controller.currentPage + 1;
+                controller.animateToPage(page: nexPage);
               },
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, side: BorderSide(color: Colors.black26),
+                foregroundColor: Colors.white,
+                side: BorderSide(color: Colors.black26),
                 shape: CircleBorder(),
                 padding: EdgeInsets.all(20),
-              ), child: Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Color(0xFF272727),shape: BoxShape.circle,
               ),
-
-                  child: Icon(Icons.arrow_forward_ios),
-            ),
+              child: Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Color(0xFF272727),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.arrow_forward_ios),
+              ),
             ),
           ),
           Positioned(
             top: 50,
             right: 20,
             child: TextButton(
-              onPressed: ()=> Get.to(Splashscreen()),
-              child: Text("Skip",style: GoogleFonts.poppins(color: Colors.white,fontWeight: FontWeight.bold),),
+              onPressed: () => Get.to(Splashscreen()),
+              child: Text(
+                "Skip",
+                style: GoogleFonts.poppins(
+                    color: Colors.white, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           Positioned(
             bottom: 10,
-
-          child: AnimatedSmoothIndicator(
-             activeIndex: controller.currentPage,
-            effect: WormEffect(
-              activeDotColor: Color(0xff272727),
-              dotHeight: 5.0
+            child: AnimatedSmoothIndicator(
+              activeIndex: controller.currentPage,
+              effect:
+                  WormEffect(activeDotColor: Color(0xff272727), dotHeight: 5.0),
+              count: 3,
             ),
-            count: 3,
-          ),
           )
         ],
       ),
     );
   }
 
-   onPageChangefCallback(int activePageIndex) {
+  onPageChangefCallback(int activePageIndex) {
     setState(() {
-      currentPage=activePageIndex;
+      currentPage = activePageIndex;
     });
-
-
   }
 }
-
-

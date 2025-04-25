@@ -70,7 +70,7 @@ class Trajet {
       final response = await http.get(Uri.parse(AppServer.TRAJET)); // Replace with your API endpoint
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['count'] ?? 0; // Assuming the API returns a JSON object with a 'count' field
+       return data['count'] ?? 0; // Assuming the API returns a JSON object with a 'count' field
       } else {
         throw Exception('Failed to load trajet count');
       }

@@ -1,9 +1,10 @@
+import 'package:covoiturage/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'controllers/Auth_Controller.dart';
-import 'on_boarding/on_boarding_screen.dart';
+ // ← Assure-toi que le chemin est correct
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,13 +19,16 @@ class MyApp extends StatelessWidget {
     // Initialiser le contrôleur d'authentification
     final authController = Get.put(AuthController());
 
-    // Vérifier l'état d'authentification au démarrage
-    //authController.checkAuthStatus();
-
-    final textTheme = Theme.of(context).textTheme;
-
     return GetMaterialApp(
-      home: OnBoardingScreen(),
+      debugShowCheckedModeBanner: false,
+      title: 'Covoiturage',
+      initialRoute: AppPage.getOnBoardingScreen(), // ← Route initiale
+      getPages: AppPage.routes, // ← Toutes tes routes
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      ),
     );
   }
 }

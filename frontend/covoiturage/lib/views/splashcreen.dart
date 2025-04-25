@@ -1,4 +1,5 @@
 import 'package:covoiturage/constants/server.dart';
+import 'package:covoiturage/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,19 +12,15 @@ import '../constants/text_strings.dart';
 
 class Splashscreen extends StatelessWidget {
   Splashscreen({Key? key}) : super(key: key);
-  final splashController = Get.put(SplashscreenController()); // Corrigé ici
-  get tDefaultSize => tDefaultSize;
+  final splashController = Get.put(SplashscreenController());
 
   @override
   Widget build(BuildContext context) {
-    splashController.startAnimation();
-    splashController.checkUserAuthentication(); // Déplacé vers le contrôleur
-
     return Scaffold(
       body: Stack(
         children: [
           Obx(
-                () => AnimatedPositioned(
+            () => AnimatedPositioned(
               duration: const Duration(milliseconds: 1600),
               top: splashController.animate.value ? 0 : -30,
               left: splashController.animate.value ? 0 : -30,
@@ -31,10 +28,9 @@ class Splashscreen extends StatelessWidget {
             ),
           ),
           Obx(
-                () => AnimatedPositioned(
+            () => AnimatedPositioned(
               duration: const Duration(milliseconds: 1600),
               top: 80,
-              left: splashController.animate.value ? tDefaultSize : -80,
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 1600),
                 opacity: splashController.animate.value ? 1 : 0,
@@ -53,17 +49,16 @@ class Splashscreen extends StatelessWidget {
             ),
           ),
           Obx(
-                () => AnimatedPositioned(
+            () => AnimatedPositioned(
               duration: const Duration(milliseconds: 1600),
               bottom: splashController.animate.value ? 100 : -100,
               child: Image.asset(tSplashImage, width: 400, height: 400),
             ),
           ),
           Obx(
-                () => AnimatedPositioned(
+            () => AnimatedPositioned(
               duration: const Duration(milliseconds: 1600),
               bottom: 80,
-              right: splashController.animate.value ? tDefaultSize : -80,
               child: AnimatedOpacity(
                 opacity: splashController.animate.value ? 1 : 0,
                 duration: const Duration(milliseconds: 1600),
@@ -91,6 +86,7 @@ class SplashscreenController extends GetxController {
   void onInit() {
     super.onInit();
     startAnimation();
+    checkUserAuthentication(); // ✅ déplace ici
   }
 
   void startAnimation() async {
@@ -100,14 +96,17 @@ class SplashscreenController extends GetxController {
 
   Future<void> checkUserAuthentication() async {
     try {
-      final response = await http.get(
-          Uri.parse(AppServer.LOGIN));// Remplacez par votre endpoint
+      await Future.delayed(
+          const Duration(seconds: 3)); // ⏳ attendre un peu après l'animation
+      final response = await http.get(Uri.parse(AppServer.LOGIN));
       if (response.statusCode == 200) {
-        Get.offAllNamed('/RegistrationPage');
+        Get.to(Splashscreen());
+      } else {
+        AppPage.gethomescreen();
       }
     } catch (e) {
       print('Error checking authentication: $e');
-      Get.offAllNamed('/login');
+       AppPage.gethomescreen();
     }
   }
 }
