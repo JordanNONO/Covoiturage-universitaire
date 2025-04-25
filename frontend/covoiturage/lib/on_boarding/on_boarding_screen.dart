@@ -1,6 +1,6 @@
 import 'package:covoiturage/views/create_trajet.dart';
 import 'package:covoiturage/views/detail_trajet.dart';
-import 'package:covoiturage/views/splashcreen.dart';
+import 'package:covoiturage/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -100,7 +100,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
             top: 50,
             right: 20,
             child: TextButton(
-              onPressed: () => Get.to(Splashscreen()),
+              onPressed: () => Get.to(LoginScreen()),
               child: Text(
                 "Skip",
                 style: GoogleFonts.poppins(

@@ -1,4 +1,5 @@
 import 'package:covoiturage/models/Utilisateur.dart';
+import 'package:covoiturage/views/create_trajet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -29,8 +30,8 @@ class _NavBarState extends State<NavBar> {
           index: controller.tabIndex.value, // Add .value to get the int from RxInt
           children: [
             HomeScreen(),
-            TrajetsListScreen(), // Make sure Utilisateur() returns a Widget
-            ReservationWidget(),
+            CreateTrajet(), // Make sure Utilisateur() returns a Widget
+            TrajetsListScreen(),
             PlaceListPage(),
           ],
         ),

@@ -46,11 +46,11 @@ class _ReservationWidgetState extends State<ReservationWidget> {
   }
 
   Future<void> _deleteReservation(String reservationId) async {
-    final response = await http.delete(Uri.parse('http://yourapi.com/reservations/$reservationId'));
+    final response = await http.delete(Uri.parse("${AppServer.RESERVATION}/$reservationId"));
 
     if (response.statusCode == 204) {
       setState(() {
-        _userDataList!.removeWhere((reservation) => reservation['id'] == reservationId);
+        _userDataList!.removeWhere((reservation) => reservation['reservationId'] == reservationId);
       });
     } else {
       // Handle error

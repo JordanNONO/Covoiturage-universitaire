@@ -1,4 +1,3 @@
-import 'package:covoiturage/views/OTP_verification.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,8 +14,6 @@ class RoundedWithShadow extends StatefulWidget {
 class _RoundedWithShadowState extends State<RoundedWithShadow> {
   final controller = TextEditingController();
   final focusNode = FocusNode();
-
-OtpVerificationScreen authController= Get.find<OtpVerificationScreen>();
 
 
   @override

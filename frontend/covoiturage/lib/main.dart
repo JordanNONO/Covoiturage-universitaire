@@ -1,9 +1,9 @@
 import 'package:covoiturage/routes/routes.dart';
+import 'package:covoiturage/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'controllers/Auth_Controller.dart';
  // ← Assure-toi que le chemin est correct
 
 void main() {
@@ -17,8 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialiser le contrôleur d'authentification
-    final authController = Get.put(AuthController());
-
+    final AuthService authService = Get.put(AuthService());
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Covoiturage',

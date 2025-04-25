@@ -1,11 +1,12 @@
-import 'package:covoiturage/views/profile_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/colors.dart';
-import '../controllers/Auth_Controller.dart';
+import '../services/auth_service.dart';
 import 'home_screen.dart';
+import 'profile_setting.dart';
 
 class DrawerNavigator extends StatefulWidget {
   const DrawerNavigator({Key? key}) : super(key: key);
@@ -15,12 +16,24 @@ class DrawerNavigator extends StatefulWidget {
 }
 
 class _DrawerNavigatorState extends State<DrawerNavigator> {
-  final AuthController authController = Get.find<AuthController>();
+  final AuthService authService = AuthService();
+  String nom = '';
+  String email = '';
+  String photoProfil = '';
 
   @override
   void initState() {
     super.initState();
-    authController.getUser(); // Récupérer les informations de l'utilisateur
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nom = prefs.getString('nom') ?? '';
+      email = prefs.getString('email') ?? '';
+      photoProfil = prefs.getString('photoProfil') ?? '';
+    });
   }
 
   @override
@@ -31,21 +44,23 @@ class _DrawerNavigatorState extends State<DrawerNavigator> {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              authController.myuser.value.nom ?? "", // Remplacez Unom par nom
+              nom,
               style: GoogleFonts.poppins(color: Colors.white),
             ),
-            accountEmail: Text(authController.myuser.value.email ?? ""), // Utilisez l'email
+            accountEmail: Text(email),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.transparent,
               child: InkWell(
-                onTap: () => Get.to(ProfileSettingScreen()),
+                onTap: () => Get.to(const ProfileSettingScreen()),
                 child: ClipOval(
-                  child: Image(
-                    image: NetworkImage(authController.myuser.value.photoProfil ?? ''), // Utilisez photoProfil
+                  child: photoProfil.isNotEmpty
+                      ? Image.network(
+                    photoProfil,
                     fit: BoxFit.cover,
                     height: 100,
                     width: 100,
-                  ),
+                  )
+                      : const Icon(Icons.person, size: 50, color: Colors.white),
                 ),
               ),
             ),
@@ -54,32 +69,32 @@ class _DrawerNavigatorState extends State<DrawerNavigator> {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.supervised_user_circle_sharp, size: 30, color: appcolor),
+            leading: const Icon(Icons.supervised_user_circle_sharp, size: 30, color: appcolor),
             title: Text("Mon Profil", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () => Get.to(ProfileSettingScreen()), // Redirige vers l'écran de paramètres de profil
+            onTap: () => Get.to(const ProfileSettingScreen()),
           ),
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
           ListTile(
-            leading: Icon(Icons.add_road, size: 30, color: appcolor),
+            leading: const Icon(Icons.add_road, size: 30, color: appcolor),
             title: Text("Trajets", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () => Get.to(HomeScreen()), // Redirige vers l'écran d'accueil
+            onTap: () => Get.to(const HomeScreen()),
           ),
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
           ListTile(
-            leading: Icon(Icons.settings, size: 30, color: appcolor),
+            leading: const Icon(Icons.settings, size: 30, color: appcolor),
             title: Text("Paramètres", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () => Get.to(HomeScreen()), // Redirige vers l'écran d'accueil
+            onTap: () => Get.to(const HomeScreen()),
           ),
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
           ListTile(
-            leading: Icon(Icons.login_sharp, size: 30, color: appcolor),
+            leading: const Icon(Icons.login_sharp, size: 30, color: appcolor),
             title: Text("Se déconnecter", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () {
-            //  authController.SignOut(); // Déconnexion
-            //  Get.offAll(Login_screen()); // Remplacez avec votre page de connexion
+            onTap: () async {
+              await authService.logout();
+              Get.offAllNamed('/login'); // Adaptez selon votre route de connexion
             },
           ),
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
         ],
       ),
     );

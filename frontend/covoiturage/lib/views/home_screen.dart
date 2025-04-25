@@ -9,7 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'; // Assurez-vous d
 import '../../../constants/colors.dart';
 import '../../../constants/image_string.dart';
 import '../../../constants/possitonGeographique.dart';
-import '../../../controllers/Auth_Controller.dart';
+import '../services/auth_service.dart';
 import 'DrawerPage.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,8 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   GoogleMapController? myMapController;
 
   @override
-  AuthController authController = Get.find<AuthController>();
-
+  final AuthService authService = Get.find<AuthService>();
   void initState() {
     super.initState();
     rootBundle.loadString('assets/map_style.text').then((String style) {
