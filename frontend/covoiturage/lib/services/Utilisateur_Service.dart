@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io'; // Import pour gérer les fichiers
 import 'package:http/http.dart' as http;
 import '../constants/server.dart';
 import '../models/Utilisateur.dart';
@@ -14,14 +15,32 @@ class UtilisateurService {
     }
   }
 
-  Future<Utilisateur> save(Utilisateur utilisateur) async {
-    final response = await http.post(
-      Uri.parse(AppServer.UTILISATEUR),
-      body: jsonEncode(utilisateur.toJson()),
-      headers: AppServer.headers,
-    );
+  Future<Utilisateur> save(Utilisateur utilisateur, File? photoProfil) async {
+    var request = http.MultipartRequest('POST', Uri.parse(AppServer.UTILISATEUR));
+
+    // Ajoutez les champs de l'utilisateur
+    request.fields['nom'] = utilisateur.nom!;
+    request.fields['prenom'] = utilisateur.prenom!;
+    request.fields['email'] = utilisateur.email!;
+    request.fields['motDePasse'] = utilisateur.motDePasse!;
+    request.fields['telephone'] = utilisateur.telephone!;
+
+    // Ajoutez la photoProfil si elle existe
+    if (photoProfil != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'photoProfil',
+        photoProfil.path,
+      ));
+    }
+
+    // Ajoutez les en-têtes si nécessaire
+    request.headers.addAll(AppServer.headers);
+
+    var response = await request.send();
+
     if (response.statusCode == 201) {
-      return Utilisateur.fromJson(jsonDecode(response.body));
+      final responseData = await http.Response.fromStream(response);
+      return Utilisateur.fromJson(jsonDecode(responseData.body));
     } else {
       throw Exception("Échec de l'ajout de l'utilisateur");
     }

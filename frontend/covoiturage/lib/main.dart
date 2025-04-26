@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
- // ← Assure-toi que le chemin est correct
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -16,17 +14,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialiser le contrôleur d'authentification
-    final AuthService authService = Get.put(AuthService());
+    // Initialiser le service d'authentification
+    Get.put(AuthService());
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Covoiturage',
-      initialRoute: AppPage.getOnBoardingScreen(), // ← Route initiale
-      getPages: AppPage.routes, // ← Toutes tes routes
+      initialRoute: AppRoutes.onboardingRoute, // Utilisez la constante de route
+      getPages: AppRoutes.all, // Utilisez la liste des routes
       theme: ThemeData(
+        primarySwatch: Colors.green, // Ajout d'une couleur principale
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
         ),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
     );
   }
