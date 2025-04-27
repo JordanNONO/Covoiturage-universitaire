@@ -7,6 +7,8 @@ package com.covoiturage.entities;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -41,75 +43,48 @@ import jakarta.persistence.TemporalType;
 public class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @Basic(optional = false)
     @Column(name = "UTILISATEUR_ID")
     private String utilisateurId;
-    @Column(name = "NOM")
+
+    @Column(name = "NOM", nullable = false)
     private String nom;
-    @Column(name = "PRENOM")
+
+    @Column(name = "PRENOM", nullable = false)
     private String prenom;
-    @Column(name = "EMAIL")
+
+    @Column(name = "EMAIL", nullable = false)
     private String email;
-    @Column(name = "MOT_DE_PASSE")
+
+    @Column(name = "MOT_DE_PASSE", nullable = false)
     private String motDePasse;
-    @Column(name = "TELEPHONE")
+
+    @Column(name = "TELEPHONE", nullable = false)
     private String telephone;
+    
     @Column(name = "DATE_INSCRIPTION")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP) // Utilisation de TIMESTAMP pour enregistrer la date et l'heure
     private Date dateInscription;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+
     @Column(name = "NOTE_MOYENNE")
-    private Double noteMoyenne;
+    private Double noteMoyenne;  // Assurez-vous que cet attribut est présent
+
     @Column(name = "PHOTO_PROFIL")
-    private String photoProfil;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "utilisateurIdAsso5")
-    private Collection<Trajet> trajetCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "utilisateurIdAsso1")
-    private Collection<Avis> avisCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "utilisateurId")
-    private Collection<Role> roleCollection;
-    @JoinColumn(name = "TRAJET_ID", referencedColumnName = "TRAJET_ID")
-    @ManyToOne(optional = false)
+    private String photoProfil; 
+    
+    @ManyToOne
+    @JoinColumn(name = "TRAJET_ID", referencedColumnName = "TRAJET_ID", nullable = true)
     private Trajet trajetId;
-    @OneToMany(mappedBy = "utilisateurIdAsso6")
-    private Collection<Vehicule> vehiculeCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "utilisateurIdAsso3")
-    private Collection<Reservation> reservationCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "utilisateurIdAsso4")
-    private Collection<Messagerie> messagerieCollection;
-    @Column(name = "OTP")
-    private String otp;  // Pour stocker l'OTP
 
-    @Column(name = "OTP_EXPIRATION")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date otpExpiration;  // Pour stocker la date d'expiration de l'OTP
-
-    // ... constructeurs, getters et setters pour les autres champs ...
-
-    public String getOtp() {
-        return otp;
-    }
-
-    public void setOtp(String otp) {
-        this.otp = otp;
-    }
-
-    public Date getOtpExpiration() {
-        return otpExpiration;
-    }
-
-    public void setOtpExpiration(Date otpExpiration) {
-        this.otpExpiration = otpExpiration;
-    }
-
+    // Constructor
     public Utilisateur() {
+        this.utilisateurId = UUID.randomUUID().toString(); // Génération d'un ID unique
+        this.dateInscription = new Date(); // Initialisation de la date d'inscription à la date actuelle
     }
 
-    public Utilisateur(String utilisateurId) {
-        this.utilisateurId = utilisateurId;
-    }
-
+    // Getters et setters
     public String getUtilisateurId() {
         return utilisateurId;
     }
@@ -165,7 +140,6 @@ public class Utilisateur implements Serializable {
     public void setDateInscription(Date dateInscription) {
         this.dateInscription = dateInscription;
     }
-
     public Double getNoteMoyenne() {
         return noteMoyenne;
     }
@@ -182,85 +156,23 @@ public class Utilisateur implements Serializable {
         this.photoProfil = photoProfil;
     }
 
-    public Collection<Trajet> getTrajetCollection() {
-        return trajetCollection;
-    }
-
-    public void setTrajetCollection(Collection<Trajet> trajetCollection) {
-        this.trajetCollection = trajetCollection;
-    }
-
-    public Collection<Avis> getAvisCollection() {
-        return avisCollection;
-    }
-
-    public void setAvisCollection(Collection<Avis> avisCollection) {
-        this.avisCollection = avisCollection;
-    }
-
-    public Collection<Role> getRoleCollection() {
-        return roleCollection;
-    }
-
-    public void setRoleCollection(Collection<Role> roleCollection) {
-        this.roleCollection = roleCollection;
-    }
-
-    public Trajet getTrajetId() {
-        return trajetId;
-    }
-
-    public void setTrajetId(Trajet trajetId) {
-        this.trajetId = trajetId;
-    }
-
-    public Collection<Vehicule> getVehiculeCollection() {
-        return vehiculeCollection;
-    }
-
-    public void setVehiculeCollection(Collection<Vehicule> vehiculeCollection) {
-        this.vehiculeCollection = vehiculeCollection;
-    }
-
-    public Collection<Reservation> getReservationCollection() {
-        return reservationCollection;
-    }
-
-    public void setReservationCollection(Collection<Reservation> reservationCollection) {
-        this.reservationCollection = reservationCollection;
-    }
-
-    public Collection<Messagerie> getMessagerieCollection() {
-        return messagerieCollection;
-    }
-
-    public void setMessagerieCollection(Collection<Messagerie> messagerieCollection) {
-        this.messagerieCollection = messagerieCollection;
-    }
-
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (utilisateurId != null ? utilisateurId.hashCode() : 0);
-        return hash;
+        return (utilisateurId != null ? utilisateurId.hashCode() : 0);
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Utilisateur)) {
             return false;
         }
         Utilisateur other = (Utilisateur) object;
-        if ((this.utilisateurId == null && other.utilisateurId != null) || (this.utilisateurId != null && !this.utilisateurId.equals(other.utilisateurId))) {
-            return false;
-        }
-        return true;
+        return (this.utilisateurId != null || other.utilisateurId == null) &&
+               (this.utilisateurId == null || this.utilisateurId.equals(other.utilisateurId));
     }
 
     @Override
     public String toString() {
-        return "covoiturage.entities.Utilisateur[ utilisateurId=" + utilisateurId + " ]";
+        return "Utilisateur[ utilisateurId=" + utilisateurId + " ]";
     }
-    
 }

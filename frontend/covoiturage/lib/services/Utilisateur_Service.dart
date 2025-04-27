@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:io'; // Import pour gérer les fichiers
+import 'dart:typed_data';
+import 'package:covoiturage/constants/server.dart';
 import 'package:http/http.dart' as http;
-import '../constants/server.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Utilisateur.dart';
 
 class UtilisateurService {
@@ -15,34 +16,29 @@ class UtilisateurService {
     }
   }
 
-  Future<Utilisateur> save(Utilisateur utilisateur, File? photoProfil) async {
+  Future<Utilisateur> save(Utilisateur utilisateur, Uint8List? photoData) async {
     var request = http.MultipartRequest('POST', Uri.parse(AppServer.UTILISATEUR));
 
-    // Ajoutez les champs de l'utilisateur
-    request.fields['nom'] = utilisateur.nom!;
-    request.fields['prenom'] = utilisateur.prenom!;
-    request.fields['email'] = utilisateur.email!;
-    request.fields['motDePasse'] = utilisateur.motDePasse!;
-    request.fields['telephone'] = utilisateur.telephone!;
+    // Ajout des champs requis
+    request.fields['nom'] = utilisateur.nom;
+    request.fields['prenom'] = utilisateur.prenom;
+    request.fields['email'] = utilisateur.email;
+    request.fields['motDePasse'] = utilisateur.motDePasse;
+    request.fields['telephone'] = utilisateur.telephone;
 
-    // Ajoutez la photoProfil si elle existe
-    if (photoProfil != null) {
-      request.files.add(await http.MultipartFile.fromPath(
-        'photoProfil',
-        photoProfil.path,
-      ));
+    // Ajout de la photo si elle existe
+    if (photoData != null) {
+      request.files.add(http.MultipartFile.fromBytes('photoProfil', photoData, filename: 'photo.jpg'));
     }
 
-    // Ajoutez les en-têtes si nécessaire
-    request.headers.addAll(AppServer.headers);
-
-    var response = await request.send();
-
+    // Envoi de la requête
+    final response = await request.send();
     if (response.statusCode == 201) {
       final responseData = await http.Response.fromStream(response);
       return Utilisateur.fromJson(jsonDecode(responseData.body));
     } else {
-      throw Exception("Échec de l'ajout de l'utilisateur");
+      final errorMessage = await response.stream.bytesToString();
+      throw Exception("Échec de l'ajout de l'utilisateur: $errorMessage");
     }
   }
 
@@ -66,11 +62,10 @@ class UtilisateurService {
     }
   }
 
-  // Nouvelle méthode pour obtenir le nombre total d'utilisateurs
-  Future<int> getUserCount(String utilisateurId) async {
-    final response = await http.get(Uri.parse('${AppServer.UTILISATEUR}/$utilisateurId'));
+  Future<int> getUserCount() async {
+    final response = await http.get(Uri.parse(AppServer.UTILISATEUR));
     if (response.statusCode == 200) {
-      return jsonDecode(response.body)['utilisateurId']; // Assurez-vous que votre API renvoie un objet avec une clé 'count'
+      return jsonDecode(response.body)['count'] ?? 0; // Assurez-vous que votre API renvoie un objet avec une clé 'count'
     } else {
       throw Exception("Échec de récupération du nombre d'utilisateurs");
     }

@@ -21,57 +21,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  Uint8List? _imageData; // Stockage des données de l'image
+  Uint8List? _imageData; // Store image data
   bool _isLoading = false;
   bool _obscurePassword = true;
 
-  // Méthode pour sélectionner une image
+  // Method to pick an image
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
-        _imageData = bytes; // Stocker les données de l'image
-        print("Image sélectionnée: ${pickedFile.path}"); // Débogage
+        _imageData = bytes; // Store image data
+        print("Image selected: ${pickedFile.path}"); // Debug
       });
     } else {
-      print("Aucune image sélectionnée.");
+      print("No image selected.");
     }
   }
 
-  // Méthode pour soumettre le formulaire
+  // Method to submit the form
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
       final authService = AuthService();
-      String? photoProfil;
 
-      // Uploader l'image si elle est sélectionnée
-      if (_imageData != null) {
-        photoProfil = await uploadImage(_imageData!);
-        if (photoProfil == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur lors de l\'upload de l\'image.')),
-          );
-          setState(() => _isLoading = false);
-          return; // Sortir si l'upload échoue
-        }
-      }
-
-      // Inscription de l'utilisateur
+      // Register user
       final result = await authService.register(
         _nomController.text,
         _prenomController.text,
         _emailController.text,
         _passwordController.text,
         _phoneController.text,
-        photoProfil ?? '', // Passer la photo ici, ou une chaîne vide si null
+        _imageData, // Pass image data directly
       );
 
       setState(() => _isLoading = false);
 
-      // Afficher le résultat de l'inscription
+      // Show registration result
       if (result == 1) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -91,29 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  // Méthode pour uploader l'image
-  Future<String?> uploadImage(Uint8List imageData) async {
-    try {
-      final request = http.MultipartRequest(
-        'POST',
-        Uri.parse(AppServer.UTILISATEUR), // URL de votre API
-      );
-      request.files.add(http.MultipartFile.fromBytes('photo', imageData, filename: 'photo.jpg'));
-
-      final response = await request.send();
-      if (response.statusCode == 200) {
-        // Remplacez par la logique pour obtenir l'URL de l'image
-        return 'URL_DE_L_IMAGE'; // Placeholder, ajustez selon votre API
-      } else {
-        throw Exception('Échec du téléchargement de l\'image, statut: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Erreur lors de l\'upload de l\'image: $e');
-      return null; // Retourner null en cas d'erreur
-    }
-  }
-
-  // Méthode pour afficher le dialogue de sélection d'image
+  // Method to show image picker dialog
   void _showImagePickerDialog() {
     showDialog(
       context: context,
@@ -182,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 30),
 
-              // Carte de formulaire
+              // Form card
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -200,7 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Avatar avec téléversement d'image
+                      // Avatar with image upload
                       GestureDetector(
                         onTap: () => _showImagePickerDialog(),
                         child: Stack(
@@ -232,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       SizedBox(height: 20),
 
-                      // Champs de formulaire
+                      // Input fields
                       _buildInputField(
                         controller: _nomController,
                         label: 'Nom',
@@ -273,7 +238,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       SizedBox(height: 25),
 
-                      // Bouton d'inscription
+                      // Registration button
                       SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -305,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               SizedBox(height: 20),
 
-              // Lien vers connexion
+              // Link to login
               TextButton(
                 onPressed: () {
                   Get.to(() => LoginScreen());
@@ -334,7 +299,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Méthode pour construire un champ de texte
+  // Method to build an input field
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
@@ -361,7 +326,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Méthode pour construire un champ de mot de passe
+  // Method to build a password field
   Widget _buildPasswordField() {
     return TextFormField(
       controller: _passwordController,

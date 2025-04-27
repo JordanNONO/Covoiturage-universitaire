@@ -26,22 +26,27 @@ import com.covoiturage.entities.Utilisateur;
 import com.covoiturage.services.UtilisateurService;
 
 @RestController
-@RequestMapping("/utilisateurs")
+@RequestMapping("/utilisateur")
 @CrossOrigin("*")
 public class UtilisateurController {
-    @Autowired
+	@Autowired
     private UtilisateurService utilisateurService;
 
-    private static final String IMAGE_UPLOAD_DIR = "C:\\Users\\jorda\\Desktop\\Covoiturage-universitaire\\backend\\Covoiturage\\uploads\\"; // Chemin pour sauvegarder les images
+    private static final String IMAGE_UPLOAD_DIR = "C:\\Users\\jorda\\Desktop\\Covoiturage-universitaire\\backend\\Covoiturage\\uploads\\";
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> save(
-        @RequestPart("nom") String nom,
-        @RequestPart("prenom") String prenom,
-        @RequestPart("email") String email,
-        @RequestPart("motDePasse") String motDePasse,
-        @RequestPart("telephone") String telephone,
+        @RequestPart(value = "nom", required = true) String nom,
+        @RequestPart(value = "prenom", required = true) String prenom,
+        @RequestPart(value = "email", required = true) String email,
+        @RequestPart(value = "motDePasse", required = true) String motDePasse,
+        @RequestPart(value = "telephone", required = true) String telephone,
         @RequestPart(value = "photoProfil", required = false) MultipartFile photoProfil) {
+
+        // Vérification des champs requis
+        if (nom == null || prenom == null || email == null || motDePasse == null || telephone == null) {
+            return new ResponseEntity<>("Tous les champs sauf la photo de profil doivent être renseignés.", HttpStatus.BAD_REQUEST);
+        }
 
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setNom(nom);
@@ -60,28 +65,24 @@ public class UtilisateurController {
             return new ResponseEntity<>("Échec d'enregistrement", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // Retourner l'URL de l'image dans la réponse
-        return ResponseEntity.ok(Map.of("url", res.getPhotoProfil())); // Ajustez selon votre logique
+        return ResponseEntity.ok(Map.of("url", res.getPhotoProfil()));
     }
 
     private String savePhoto(MultipartFile photoProfil) {
         try {
-            // Créez le répertoire si nécessaire
             File directory = new File(IMAGE_UPLOAD_DIR);
             if (!directory.exists()) {
-                directory.mkdirs(); // Crée le répertoire si nécessaire
+                directory.mkdirs();
             }
 
-            // Définissez le nom de fichier
             String fileName = System.currentTimeMillis() + "_" + photoProfil.getOriginalFilename();
             Path filePath = Paths.get(directory.getAbsolutePath(), fileName);
             Files.write(filePath, photoProfil.getBytes());
 
-            // Retournez l'URL accessible de l'image
-            return "http://votre-serveur.com/uploads/" + fileName; // Ajustez selon votre configuration
+            return "http://votre-serveur.com/uploads/" + fileName;
         } catch (IOException e) {
             e.printStackTrace();
-            return null; // Retourner null en cas d'erreur
+            return null;
         }
     }
 

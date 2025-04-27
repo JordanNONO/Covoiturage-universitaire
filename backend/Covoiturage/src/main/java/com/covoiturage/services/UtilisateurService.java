@@ -23,7 +23,7 @@ public class UtilisateurService {
     private UtilisateurRepos utilisateurRepos;
 
     public Utilisateur saveOrUpdate(Utilisateur u) {
-        if (u.getNom() != null && u.getEmail() != null && u.getMotDePasse() != null && u.getPhotoProfil() != null && u.getDateInscription() != null && u.getTelephone() != null) {
+        if (u.getNom() != null && u.getPrenom() !=null && u.getEmail() != null && u.getMotDePasse() != null && u.getPhotoProfil() != null  && u.getTelephone() != null ) {
             return utilisateurRepos.save(u);
         }
         return null;
@@ -50,27 +50,27 @@ public class UtilisateurService {
         throw new NoSuchElementException("Aucun utilisateur trouvé avec l'ID : " + utilisateurId);
     }
 
-	    public Collection<Trajet> getTrajets(String utilisateurId) {
-	        return getById(utilisateurId).getTrajetCollection();
-	    }
-
-	    public Collection<Avis> getAvis(String utilisateurId) {
-	        return getById(utilisateurId).getAvisCollection();
-	    }
-
-	    public Collection<Role> getRoles(String utilisateurId) {
-	        return getById(utilisateurId).getRoleCollection();
-	    }
-
-	    public Collection<Vehicule> getVehicules(String utilisateurId) {
-	        return getById(utilisateurId).getVehiculeCollection();
-	    }
-
-	    public Collection<Reservation> getReservations(String utilisateurId) {
-	        return getById(utilisateurId).getReservationCollection();
-	    }
-
-	    public Collection<Messagerie> getMessageries(String utilisateurId) {
-	        return getById(utilisateurId).getMessagerieCollection();
-	    }
+//	    public Collection<Trajet> getTrajets(String utilisateurId) {
+//	        return getById(utilisateurId).getTrajetCollection();
+//	    }
+//
+//	    public Collection<Avis> getAvis(String utilisateurId) {
+//	        return getById(utilisateurId).getAvisCollection();
+//	    }
+//
+//	    public Collection<Role> getRoles(String utilisateurId) {
+//	        return getById(utilisateurId).getRoleCollection();
+//	    }
+//
+//	    public Collection<Vehicule> getVehicules(String utilisateurId) {
+//	        return getById(utilisateurId).getVehiculeCollection();
+//	    }
+//
+//	    public Collection<Reservation> getReservations(String utilisateurId) {
+//	        return getById(utilisateurId).getReservationCollection();
+//	    }
+//
+//	    public Collection<Messagerie> getMessageries(String utilisateurId) {
+//	        return getById(utilisateurId).getMessagerieCollection();
+//	    }
 }
