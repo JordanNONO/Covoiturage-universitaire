@@ -1,108 +1,99 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-
-import '../constants/colors.dart';
-import '../constants/server.dart';
+import 'package:image_picker/image_picker.dart';
+import '../models/Utilisateur.dart';
+import '../services/utilisateur_service.dart';
 import 'navbar.dart';
 
 class ProfileSettingScreen extends StatefulWidget {
-  const ProfileSettingScreen({Key? key}) : super(key: key);
-
   @override
-  State<ProfileSettingScreen> createState() => _ProfileSettingScreenState();
+  _ProfileSettingScreenState createState() => _ProfileSettingScreenState();
 }
 
 class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
-  // Form verification
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nomController = TextEditingController();
+  final TextEditingController _prenomController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController homeController = TextEditingController();
-  TextEditingController businessController = TextEditingController();
-  TextEditingController telController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-
-  bool isLoading = false;
+  Uint8List? _imageData; // Store image data
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  final UtilisateurService _utilisateurService = UtilisateurService();
+  Utilisateur? _utilisateur;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+  void initState() {
+    super.initState();
+    _loadUserData(); // Load user data when screen initializes
+  }
+
+  Future<void> _loadUserData() async {
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
+    try {
+      // Fetch user data from service
+      _utilisateur = await _utilisateurService.getAll().then((list) => list.first); // Get the first user for demonstration
+      setState(() {
+        _nomController.text = _utilisateur?.nom ?? '';
+        _prenomController.text = _utilisateur?.prenom ?? '';
+        _emailController.text = _utilisateur?.email ?? '';
+        _phoneController.text = _utilisateur?.telephone ?? '';
+        // Load image if available
+        _imageData = _utilisateur?.photoProfil != null ? base64Decode(_utilisateur!.photoProfil!) : null;
+      });
+    } catch (e) {
+      print('Error loading user data: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors du chargement des données.')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false; // Hide loading indicator
+      });
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _imageData = bytes; // Store image data
+      });
+    }
+  }
+
+  void _showImagePickerDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Choisir une image'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: Get.height * 0.4,
-              child: Stack(
-                children: [
-                  // Replace with your intro widget
-                  Container(color: appcolor), // Placeholder for greenIntroWidget
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                  ),
-                ],
-              ),
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: Colors.green),
+              title: Text('Prendre une photo'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
             ),
-            SizedBox(height: 20),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 23),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    TextFieldWidget('Nom', Icons.person_outlined, nameController, (String? input) {
-                      if (input!.isEmpty) {
-                        return "Le champ nom est obligatoire";
-                      }
-                      if (input.length < 3) {
-                        return "Le nom doit contenir au moins 3 caractères";
-                      }
-                      return null;
-                    }),
-                    SizedBox(height: 10),
-                    TextFieldWidget('Prénom', Icons.person_outlined, homeController, (String? input) {
-                      if (input!.isEmpty) {
-                        return "Le champ prénom est obligatoire";
-                      }
-                      return null;
-                    }),
-                    SizedBox(height: 10),
-                    TextFieldWidget('Ville de résidence', Icons.home_outlined, businessController, (String? input) {
-                      if (input!.isEmpty) {
-                        return "Le champ ville de résidence est obligatoire";
-                      }
-                      return null;
-                    }),
-                    SizedBox(height: 10),
-                    TextFieldWidget('Téléphone', Icons.phone, telController, (String? input) {
-                      if (input!.isEmpty) {
-                        return "Le champ téléphone est obligatoire";
-                      }
-                      return null;
-                    }),
-                    SizedBox(height: 10),
-                    TextFieldWidget('Email', Icons.email, emailController, (String? input) {
-                      if (input!.isEmpty) {
-                        return "Le champ email est obligatoire";
-                      }
-                      return null;
-                    }),
-                    SizedBox(height: 10),
-                    SizedBox(height: 30),
-                    isLoading
-                        ? CircularProgressIndicator()
-                        : greenButton('Enregistrer', () {
-                      if (formKey.currentState!.validate()) {
-                        storeUserInfo();
-                      }
-                    }),
-                  ],
-                ),
-              ),
+            ListTile(
+              leading: Icon(Icons.photo_library, color: Colors.green),
+              title: Text('Choisir depuis la galerie'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
             ),
           ],
         ),
@@ -110,94 +101,262 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
     );
   }
 
-  Future<void> storeUserInfo() async {
-    setState(() {
-      isLoading = true;
-    });
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
 
-    try {
-      final response = await http.post(
-        Uri.parse(AppServer.UTILISATEUR),// Replace with your API endpoint
-          headers: AppServer.headers,
-        body: jsonEncode({
-          'nom': nameController.text,
-          'prenom': homeController.text,
-          'adresse': businessController.text,
-          'telephone': telController.text,
-          'email': emailController.text,
-        }),
+      // Create a new Utilisateur object
+      Utilisateur updatedUser = Utilisateur(
+        utilisateurId: _utilisateur?.utilisateurId,
+        nom: _nomController.text,
+        prenom: _prenomController.text,
+        email: _emailController.text,
+        motDePasse: _passwordController.text,
+        telephone: _phoneController.text,
+        photoProfil: _imageData != null ? base64Encode(_imageData!) : null, // Convert image to base64
       );
 
-      if (response.statusCode == 200) {
-        // Handle successful registration
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => NavBar()));
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Utilisateur ajouté avec succès'),
-        ));
-      } else {
-        // Handle error
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Échec de l\'ajout de l\'utilisateur'),
-        ));
+      try {
+        // Update user details
+        await _utilisateurService.update(updatedUser.utilisateurId!, updatedUser);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Mise à jour réussie!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Get.to(() => NavBar());
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur de mise à jour, veuillez réessayer.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } finally {
+        setState(() => _isLoading = false);
       }
-    } catch (e) {
-      print('Error during registration: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Une erreur est survenue.'),
-      ));
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
     }
   }
-}
 
-Widget TextFieldWidget(String title, IconData iconData, TextEditingController controller, Function validator) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        title,
-        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
-      ),
-      const SizedBox(height: 6),
-      Container(
-        width: Get.width,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), spreadRadius: 1, blurRadius: 1),
-          ],
-          borderRadius: BorderRadius.circular(8),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.green.shade800,
+              Colors.green.shade600,
+              Colors.green.shade400,
+            ],
+          ),
         ),
-        child: TextFormField(
-          validator: (input) => validator(input),
-          controller: controller,
-          style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
-          decoration: InputDecoration(
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Icon(iconData, color: appcolor),
-            ),
-            border: InputBorder.none,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              SizedBox(height: 40),
+              Text(
+                'Modifier votre profil',
+                style: GoogleFonts.poppins(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Mettez à jour vos informations',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.white70,
+                ),
+              ),
+              SizedBox(height: 30),
+
+              // Form card
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 15,
+                      offset: Offset(0, 10),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.all(25),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Avatar with image upload
+                      GestureDetector(
+                        onTap: () => _showImagePickerDialog(),
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.green.shade100,
+                              backgroundImage: _imageData != null
+                                  ? MemoryImage(_imageData!)
+                                  : null,
+                              child: _imageData == null
+                                  ? Icon(Icons.person, size: 50, color: Colors.green)
+                                  : null,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+
+                      // Input fields
+                      _buildInputField(
+                        controller: _nomController,
+                        label: 'Nom',
+                        icon: Icons.person_outline,
+                      ),
+                      SizedBox(height: 15),
+
+                      _buildInputField(
+                        controller: _prenomController,
+                        label: 'Prénom',
+                        icon: Icons.person_outline,
+                      ),
+                      SizedBox(height: 15),
+
+                      _buildInputField(
+                        controller: _emailController,
+                        label: 'Email',
+                        icon: Icons.email_outlined,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      SizedBox(height: 15),
+
+                      _buildPasswordField(),
+                      SizedBox(height: 15),
+
+                      _buildInputField(
+                        controller: _phoneController,
+                        label: 'Téléphone',
+                        icon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      SizedBox(height: 25),
+
+                      // Update button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade700,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 5,
+                          ),
+                          onPressed: _isLoading ? null : _submitForm,
+                          child: _isLoading
+                              ? CircularProgressIndicator(color: Colors.white)
+                              : Text(
+                            'MISE À JOUR',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 20),
+            ],
           ),
         ),
       ),
-    ],
-  );
-}
+    );
+  }
 
-Widget greenButton(String title, Function onPressed) {
-  return MaterialButton(
-    minWidth: Get.width,
-    height: 50,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-    color: appcolor,
-    onPressed: () => onPressed(),
-    child: Text(
-      title,
-      style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-    ),
-  );
+  // Method to build an input field
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Colors.green),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.green, width: 2),
+        ),
+      ),
+      keyboardType: keyboardType,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Ce champ est requis';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      controller: _passwordController,
+      obscureText: _obscurePassword,
+      decoration: InputDecoration(
+        labelText: 'Mot de passe',
+        prefixIcon: Icon(Icons.lock_outline, color: Colors.green),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+            color: Colors.green,
+          ),
+          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.green, width: 2),
+        ),
+      ),
+      validator: (value) {
+        if (value!.isEmpty) return 'Mot de passe requis';
+        if (value.length < 6) return '6 caractères minimum';
+        return null;
+      },
+    );
+  }
 }

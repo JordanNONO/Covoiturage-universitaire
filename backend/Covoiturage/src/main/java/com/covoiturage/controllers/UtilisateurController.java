@@ -29,7 +29,7 @@ import com.covoiturage.services.UtilisateurService;
 @RequestMapping("/utilisateur")
 @CrossOrigin("*")
 public class UtilisateurController {
-	@Autowired
+    @Autowired
     private UtilisateurService utilisateurService;
 
     private static final String IMAGE_UPLOAD_DIR = "C:\\Users\\jorda\\Desktop\\Covoiturage-universitaire\\backend\\Covoiturage\\uploads\\";
@@ -68,7 +68,7 @@ public class UtilisateurController {
         return ResponseEntity.ok(Map.of("url", res.getPhotoProfil()));
     }
 
-    private String savePhoto(MultipartFile photoProfil) {
+    public String savePhoto(MultipartFile photoProfil) {
         try {
             File directory = new File(IMAGE_UPLOAD_DIR);
             if (!directory.exists()) {
@@ -79,7 +79,7 @@ public class UtilisateurController {
             Path filePath = Paths.get(directory.getAbsolutePath(), fileName);
             Files.write(filePath, photoProfil.getBytes());
 
-            return "http://votre-serveur.com/uploads/" + fileName;
+            return "http://localhost:8009/uploads/" + fileName;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

@@ -1,3 +1,4 @@
+import 'package:covoiturage/views/show_trajet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -51,7 +52,7 @@ class _DrawerNavigatorState extends State<DrawerNavigator> {
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.transparent,
               child: InkWell(
-                onTap: () => Get.to(const ProfileSettingScreen()),
+                onTap: () => Get.to(ProfileSettingScreen()),
                 child: ClipOval(
                   child: photoProfil.isNotEmpty
                       ? Image.network(
@@ -71,13 +72,13 @@ class _DrawerNavigatorState extends State<DrawerNavigator> {
           ListTile(
             leading: const Icon(Icons.supervised_user_circle_sharp, size: 30, color: appcolor),
             title: Text("Mon Profil", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () => Get.to(const ProfileSettingScreen()),
+            onTap: () => Get.to(ProfileSettingScreen()),
           ),
           const Divider(thickness: 1),
           ListTile(
             leading: const Icon(Icons.add_road, size: 30, color: appcolor),
             title: Text("Trajets", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () => Get.to(const HomeScreen()),
+            onTap: () => Get.to(TrajetsListScreen()),
           ),
           const Divider(thickness: 1),
           ListTile(

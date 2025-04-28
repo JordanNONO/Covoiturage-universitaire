@@ -20,15 +20,15 @@ class UtilisateurService {
     var request = http.MultipartRequest('POST', Uri.parse(AppServer.UTILISATEUR));
 
     // Ajout des champs requis
-    request.fields['nom'] = utilisateur.nom;
-    request.fields['prenom'] = utilisateur.prenom;
-    request.fields['email'] = utilisateur.email;
-    request.fields['motDePasse'] = utilisateur.motDePasse;
-    request.fields['telephone'] = utilisateur.telephone;
+    request.fields['nom'] = utilisateur.nom!;
+    request.fields['prenom'] = utilisateur.prenom!;
+    request.fields['email'] = utilisateur.email!;
+    request.fields['motDePasse'] = utilisateur.motDePasse!;
+    request.fields['telephone'] = utilisateur.telephone!;
 
     // Ajout de la photo si elle existe
     if (photoData != null) {
-      request.files.add(http.MultipartFile.fromBytes('photoProfil', photoData, filename: 'photo.jpg'));
+      request.files.add(http.MultipartFile.fromBytes('photoProfil', photoData, filename: 'uploads'));
     }
 
     // Envoi de la requête

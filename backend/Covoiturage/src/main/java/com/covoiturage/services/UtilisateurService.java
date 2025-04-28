@@ -1,6 +1,5 @@
 package com.covoiturage.services;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -8,13 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.covoiturage.entities.Avis;
-import com.covoiturage.entities.Messagerie;
-import com.covoiturage.entities.Reservation;
-import com.covoiturage.entities.Role;
-import com.covoiturage.entities.Trajet;
 import com.covoiturage.entities.Utilisateur;
-import com.covoiturage.entities.Vehicule;
 import com.covoiturage.repos.UtilisateurRepos;
 
 @Service

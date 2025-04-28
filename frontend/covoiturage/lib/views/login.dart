@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../routes/routes.dart';
+import '../services/auth_service.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -32,7 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 SizedBox(height: MediaQuery.of(context).padding.top + 40),
-                // Logo et titre
                 Column(
                   children: [
                     SizedBox(height: 20),
@@ -44,17 +43,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    Text(
-                      'Partagez le trajet, partagez les coûts',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 50),
-                // Carte de formulaire
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -79,7 +70,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: 30),
-                      // Champ Email
                       TextFormField(
                         controller: emailController,
                         decoration: InputDecoration(
@@ -89,16 +79,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color(0xFF2E7D32),
-                                width: 2),
+                            borderSide: BorderSide(color: Color(0xFF2E7D32), width: 2),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: 20),
-                      // Champ Mot de passe
                       TextFormField(
                         controller: passwordController,
                         decoration: InputDecoration(
@@ -106,9 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF2E7D32)),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
+                              _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                               color: Color(0xFF2E7D32),
                             ),
                             onPressed: () {
@@ -121,32 +106,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color(0xFF2E7D32),
-                                width: 2),
+                            borderSide: BorderSide(color: Color(0xFF2E7D32), width: 2),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         obscureText: _obscurePassword,
                       ),
                       SizedBox(height: 10),
-                      // Mot de passe oublié
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            // Navigator pour mot de passe oublié
-                          },
-                          child: Text(
-                            'Mot de passe oublié ?',
-                            style: GoogleFonts.poppins(
-                              color: Color(0xFF2E7D32),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      // Bouton de connexion
                       SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -158,8 +124,27 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             elevation: 5,
                           ),
-                          onPressed: () {
-                            // Gérer la connexion
+                          onPressed: () async {
+                            // Appel au service d'authentification
+                            int result = await AuthService().login(
+                              emailController.text,
+                              passwordController.text,
+                            );
+
+                            if (result == 1) {
+                              // Connexion réussie
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Connexion réussie')),
+                              );
+
+                              // Naviguer vers HomeScreen
+                              Get.to(() => HomeScreen());
+                            } else {
+                              // Échec de la connexion
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Échec de la connexion')),
+                              );
+                            }
                           },
                           child: Text(
                             'SE CONNECTER',
@@ -172,51 +157,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      // Séparateur
-                      Row(
-                        children: [
-                          Expanded(child: Divider(color: Colors.grey)),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(
-                              'OU',
-                              style: GoogleFonts.poppins(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          Expanded(child: Divider(color: Colors.grey)),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      // Connexion avec réseaux sociaux
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.facebook, color: Color(0xFF2E7D32), size: 40),
-                            onPressed: () {},
-                          ),
-                          SizedBox(width: 20),
-                          IconButton(
-                            icon: Icon(Icons.mail, color: Color(0xFF2E7D32), size: 40),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
                 SizedBox(height: 30),
-                // Lien vers inscription
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Nouveau utilisateur ? ',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                      ),
+                      style: GoogleFonts.poppins(color: Colors.white),
                     ),
                     TextButton(
                       onPressed: () {

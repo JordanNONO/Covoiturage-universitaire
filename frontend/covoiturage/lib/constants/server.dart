@@ -8,7 +8,7 @@ class AppServer{
   static const TRAJET = API + "/trajet";
   static const VEHICULE = API + "/vehicule";
   static const MESSAGERIE = API + "/messagerie";
-  static const LOGIN = API + "/auth";
+  static const LOGIN = API + "/auth/login";
 
   static const headers ={
     'Content-Type' : 'application/json',
