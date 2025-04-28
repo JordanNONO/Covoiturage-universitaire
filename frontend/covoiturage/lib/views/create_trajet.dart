@@ -54,7 +54,7 @@ class _CreateTrajetState extends State<CreateTrajet> {
                         style: GoogleFonts.poppins(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white
+                            color: Colors.black54
                         ),
                       ),
                     ),
@@ -70,7 +70,7 @@ class _CreateTrajetState extends State<CreateTrajet> {
                 child: Column(
                   children: [
                     TextFieldWidget(
-                        'Ville de départ',
+                        'Départ',
                         Icons.location_on,
                             (value) => _trajet.depart = value,
                             (String? input) {
@@ -82,7 +82,7 @@ class _CreateTrajetState extends State<CreateTrajet> {
                     ),
                     SizedBox(height: 10),
                     TextFieldWidget(
-                        'Ville d\'arrivée',
+                        'Arrivée',
                         Icons.location_on,
                             (value) => _trajet.destination = value,
                             (String? input) {
@@ -128,7 +128,7 @@ class _CreateTrajetState extends State<CreateTrajet> {
                     SizedBox(height: 10),
                     TextFieldWidget(
                         'Prix',
-                        Icons.attach_money,
+                        Icons.account_balance_wallet_rounded,
                             (value) => _trajet.tarif = double.tryParse(value) ?? 0,
                             (String? input) {
                           if (input!.isEmpty) return "Le champ est obligatoire";

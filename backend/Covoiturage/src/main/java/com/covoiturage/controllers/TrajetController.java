@@ -25,8 +25,8 @@ public class TrajetController {
     private TrajetService trajetService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody Trajet trajet) {
-        Trajet res = trajetService.saveOrUpdate(trajet);
+    public ResponseEntity<?> save(@RequestBody Trajet t) {
+        Trajet res = trajetService.saveOrUpdate(t, null);
         if (res == null) {
             return new ResponseEntity<>("Échec d'enregistrement", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -39,7 +39,7 @@ public class TrajetController {
     }
 
     @GetMapping("/{trajetId}")
-    public ResponseEntity<?> getById(@PathVariable("trajetId") String trajetId) {
+    public ResponseEntity<?> getById(@PathVariable("trajetId") Integer trajetId) {
         try {
             Trajet trajet = trajetService.getById(trajetId);
             return new ResponseEntity<>(trajet, HttpStatus.OK);
@@ -49,7 +49,7 @@ public class TrajetController {
     }
 
     @DeleteMapping("/{trajetId}")
-    public ResponseEntity<String> delete(@PathVariable("trajetId") String trajetId) {
+    public ResponseEntity<String> delete(@PathVariable("trajetId") Integer trajetId) {
         try {
             trajetService.delete(trajetId);
             return new ResponseEntity<>("Trajet supprimé avec succès", HttpStatus.NO_CONTENT);

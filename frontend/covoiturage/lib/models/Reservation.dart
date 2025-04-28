@@ -4,7 +4,7 @@ import 'Utilisateur.dart';
 class Reservation {
   String? reservationId;
   String? utilisateurId;
-  String? trajetId;
+  int? trajetId;
   String? statut;
   DateTime? dateReservation;
   String? modePaiement;

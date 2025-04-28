@@ -40,63 +40,120 @@ class _DrawerNavigatorState extends State<DrawerNavigator> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: 250,
-      child: ListView(
+      width: 270, // Légèrement plus large pour un meilleur espacement
+      backgroundColor: Colors.grey[50], // Un gris clair subtil pour l'arrière-plan
+      child: Column(
         children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              nom,
-              style: GoogleFonts.poppins(color: Colors.white),
-            ),
-            accountEmail: Text(email),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: InkWell(
-                onTap: () => Get.to(ProfileSettingScreen()),
-                child: ClipOval(
-                  child: photoProfil.isNotEmpty
-                      ? Image.network(
-                    photoProfil,
-                    fit: BoxFit.cover,
-                    height: 100,
-                    width: 100,
-                  )
-                      : const Icon(Icons.person, size: 50, color: Colors.white),
+          _buildDrawerHeader(),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(
+                  icon: Icons.person_outline,
+                  text: "Mon Profil",
+                  onTap: () => Get.to(ProfileSettingScreen()),
                 ),
+                Divider(thickness: 0.8, color: Colors.grey[300]),
+                _buildDrawerItem(
+                  icon: Icons.route_outlined,
+                  text: "Mes Trajets",
+                  onTap: () => Get.to(TrajetsListScreen()),
+                ),
+                 Divider(thickness: 0.8, color: Colors.grey[300]),
+                _buildDrawerItem(
+                  icon: Icons.settings_outlined,
+                  text: "Paramètres",
+                  onTap: () => Get.to(const HomeScreen()),
+                ),
+                 Divider(thickness: 0.8, color: Colors.grey[300]),
+                _buildDrawerItem(
+                  icon: Icons.logout,
+                  text: "Se déconnecter",
+                  onTap: () async {
+                    await authService.logout();
+                    Get.offAllNamed('/login');
+                  },
+                ),
+              ],
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              "Covoiturage App v1.0", // Indication de la version
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerHeader() {
+    return Container(
+      padding: const EdgeInsets.only(top: 60, bottom: 20, left: 20, right: 20), // Meilleur espacement
+      decoration: BoxDecoration(
+        color: appcolor,
+      ),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () => Get.to(ProfileSettingScreen()),
+            child: CircleAvatar(
+              radius: 40, // Taille plus confortable
+              backgroundColor: Colors.white,
+              child: ClipOval(
+                child: photoProfil.isNotEmpty
+                    ? Image.network(
+                  photoProfil,
+                  fit: BoxFit.cover,
+                  height: 80,
+                  width: 80,
+                )
+                    : const Icon(Icons.person_outline, size: 40, color: appcolor), // Icône contourée
               ),
             ),
-            decoration: BoxDecoration(
-              color: appcolor,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  nom,
+                  style: GoogleFonts.poppins(
+                      color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18), // Style plus lisible
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  email,
+                  style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                ),
+              ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.supervised_user_circle_sharp, size: 30, color: appcolor),
-            title: Text("Mon Profil", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () => Get.to(ProfileSettingScreen()),
-          ),
-          const Divider(thickness: 1),
-          ListTile(
-            leading: const Icon(Icons.add_road, size: 30, color: appcolor),
-            title: Text("Trajets", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () => Get.to(TrajetsListScreen()),
-          ),
-          const Divider(thickness: 1),
-          ListTile(
-            leading: const Icon(Icons.settings, size: 30, color: appcolor),
-            title: Text("Paramètres", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () => Get.to(const HomeScreen()),
-          ),
-          const Divider(thickness: 1),
-          ListTile(
-            leading: const Icon(Icons.login_sharp, size: 30, color: appcolor),
-            title: Text("Se déconnecter", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-            onTap: () async {
-              await authService.logout();
-              Get.offAllNamed('/login'); // Adaptez selon votre route de connexion
-            },
-          ),
-          const Divider(thickness: 1),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({required IconData icon, required String text, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), // Espacement vertical accru
+        child: Row(
+          children: [
+            Icon(icon, size: 26, color: appcolor), // Taille d'icône cohérente
+            const SizedBox(width: 16),
+            Text(
+              text,
+              style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16), // Style de texte uniforme
+            ),
+          ],
+        ),
       ),
     );
   }

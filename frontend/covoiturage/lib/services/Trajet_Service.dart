@@ -27,7 +27,7 @@ class TrajetService {
     }
   }
 
-  Future<Trajet> update(String trajetId, Trajet trajet) async {
+  Future<Trajet> update(int trajetId, Trajet trajet) async {
     final response = await http.put(
       Uri.parse("${AppServer.TRAJET}/$trajetId"),
       body: jsonEncode(trajet.toJson()),
@@ -40,7 +40,7 @@ class TrajetService {
     }
   }
 
-  Future<void> delete(String trajetId) async {
+  Future<void> delete(int trajetId) async {
     final response = await http.delete(Uri.parse("${AppServer.TRAJET}/$trajetId"));
     if (response.statusCode != 204) {
       throw Exception("Échec de la suppression du trajet");

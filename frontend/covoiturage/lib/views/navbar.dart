@@ -1,5 +1,6 @@
 import 'package:covoiturage/models/Utilisateur.dart';
 import 'package:covoiturage/views/create_trajet.dart';
+import 'package:covoiturage/views/profile_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -20,32 +21,38 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  final controller = Get.put(NavbarController());
+  final controller = Get.put(NavbarController()); // Initialisation du contrôleur ici
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<NavbarController>(builder: (context) {
+    return GetBuilder<NavbarController>(builder: (controller) {
       return Scaffold(
         body: IndexedStack(
-          index: controller.tabIndex.value, // Add .value to get the int from RxInt
+          index: controller.tabIndex.value,
           children: [
             HomeScreen(),
-            CreateTrajet(), // Make sure Utilisateur() returns a Widget
+            CreateTrajet(),
             TrajetsListScreen(),
             PlaceListPage(),
+            ProfileSettingScreen(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: controller.tabIndex.value, // Add .value here too
-          onTap: (index) => controller.changeTabIndex(index), // Ensure this expects an int
+          currentIndex: controller.tabIndex.value,
+          onTap: controller.changeTabIndex,
           selectedItemColor: appcolor,
-          unselectedItemColor: Colors.grey,
+          unselectedItemColor: Colors.grey[600],
+          showSelectedLabels: true,
+          showUnselectedLabels: false,
+          type: BottomNavigationBarType.fixed,
+          elevation: 8,
+          backgroundColor: Colors.white,
           items: [
-            _bottomBarItem(IconlyBold.home, "Home"),
-            _bottomBarItem(IconlyBold.ticket, "Trajet"),
-            _bottomBarItem(IconlyBold.user_2, "Users"),
+            _bottomBarItem(IconlyBold.home, "Accueil"),
+            _bottomBarItem(IconlyBold.arrow_down_circle, "Ajouter"),
+            _bottomBarItem(IconlyBold.category, "Utilisateurs"),
             _bottomBarItem(IconlyBold.time_circle, "Historique"),
-            _bottomBarItem(Icons.monetization_on, "Tarif"),
+            _bottomBarItem(IconlyBold.user_2, "Profil"), // Changement d'icône et de libellé
           ],
         ),
       );
@@ -53,6 +60,12 @@ class _NavBarState extends State<NavBar> {
   }
 
   BottomNavigationBarItem _bottomBarItem(IconData icon, String label) {
-    return BottomNavigationBarItem(icon: Icon(icon), label: label);
+    return BottomNavigationBarItem(
+      icon: Padding(
+        padding: const EdgeInsets.only(bottom: 4.0),
+        child: Icon(icon, size: 26),
+      ),
+      label: label,
+    );
   }
 }

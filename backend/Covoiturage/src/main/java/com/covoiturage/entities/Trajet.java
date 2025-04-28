@@ -7,10 +7,14 @@ package com.covoiturage.entities;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -41,9 +45,10 @@ public class Trajet implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TRAJET_ID")
-    private String trajetId;
+    private Integer trajetId; 
+
     @Column(name = "UTILISATEUR_ID")
     private String utilisateurId;
     @Column(name = "VEHICULE_ID")
@@ -69,17 +74,19 @@ public class Trajet implements Serializable {
     private Collection<Vehicule> vehiculeCollection;
 
     public Trajet() {
+  
+        this.dateHeureDepart = new Date();
     }
 
-    public Trajet(String trajetId) {
+    public Trajet(Integer trajetId) {
         this.trajetId = trajetId;
     }
 
-    public String getTrajetId() {
+    public Integer getTrajetId() {
         return trajetId;
     }
 
-    public void setTrajetId(String trajetId) {
+    public void setTrajetId(Integer trajetId) {
         this.trajetId = trajetId;
     }
 
@@ -146,22 +153,22 @@ public class Trajet implements Serializable {
     public void setUtilisateurIdAsso5(Utilisateur utilisateurIdAsso5) {
         this.utilisateurIdAsso5 = utilisateurIdAsso5;
     }
-
-    public Collection<Utilisateur> getUtilisateurCollection() {
-        return utilisateurCollection;
-    }
-
-    public void setUtilisateurCollection(Collection<Utilisateur> utilisateurCollection) {
-        this.utilisateurCollection = utilisateurCollection;
-    }
-
-    public Collection<Vehicule> getVehiculeCollection() {
-        return vehiculeCollection;
-    }
-
-    public void setVehiculeCollection(Collection<Vehicule> vehiculeCollection) {
-        this.vehiculeCollection = vehiculeCollection;
-    }
+//
+//    public Collection<Utilisateur> getUtilisateurCollection() {
+//        return utilisateurCollection;
+//    }
+//
+//    public void setUtilisateurCollection(Collection<Utilisateur> utilisateurCollection) {
+//        this.utilisateurCollection = utilisateurCollection;
+//    }
+//
+//    public Collection<Vehicule> getVehiculeCollection() {
+//        return vehiculeCollection;
+//    }
+//
+//    public void setVehiculeCollection(Collection<Vehicule> vehiculeCollection) {
+//        this.vehiculeCollection = vehiculeCollection;
+//    }
 
     @Override
     public int hashCode() {
