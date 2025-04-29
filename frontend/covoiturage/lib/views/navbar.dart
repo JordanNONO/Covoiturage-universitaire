@@ -1,6 +1,7 @@
 import 'package:covoiturage/models/Utilisateur.dart';
 import 'package:covoiturage/views/create_trajet.dart';
 import 'package:covoiturage/views/profile_setting.dart';
+import 'package:covoiturage/views/reservation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
@@ -33,7 +34,7 @@ class _NavBarState extends State<NavBar> {
             HomeScreen(),
             CreateTrajet(),
             TrajetsListScreen(),
-            PlaceListPage(),
+            ReservationList(),
             ProfileSettingScreen(),
           ],
         ),
@@ -50,8 +51,8 @@ class _NavBarState extends State<NavBar> {
           items: [
             _bottomBarItem(IconlyBold.home, "Accueil"),
             _bottomBarItem(IconlyBold.arrow_down_circle, "Ajouter"),
-            _bottomBarItem(IconlyBold.category, "Utilisateurs"),
-            _bottomBarItem(IconlyBold.time_circle, "Historique"),
+            _bottomBarItem(IconlyBold.category, "Trajet"),
+            _bottomBarItem(IconlyBold.time_circle, "Reservation"),
             _bottomBarItem(IconlyBold.user_2, "Profil"), // Changement d'icône et de libellé
           ],
         ),

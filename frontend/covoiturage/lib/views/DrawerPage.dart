@@ -1,3 +1,4 @@
+import 'package:covoiturage/views/reservation_screen.dart';
 import 'package:covoiturage/views/show_trajet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -60,6 +61,13 @@ class _DrawerNavigatorState extends State<DrawerNavigator> {
                   text: "Mes Trajets",
                   onTap: () => Get.to(TrajetsListScreen()),
                 ),
+
+              Divider(thickness: 0.8, color: Colors.grey[300]),
+          _buildDrawerItem(
+            icon: Icons.airplane_ticket_outlined,
+            text: "Reservation",
+            onTap: () => Get.to(const ReservationList()),
+          ),
                  Divider(thickness: 0.8, color: Colors.grey[300]),
                 _buildDrawerItem(
                   icon: Icons.settings_outlined,

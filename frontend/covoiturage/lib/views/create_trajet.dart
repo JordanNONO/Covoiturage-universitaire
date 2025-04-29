@@ -44,7 +44,7 @@ class _CreateTrajetState extends State<CreateTrajet> {
                     width: Get.width,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/r.png'),
+                        image: AssetImage('assets/mask.png'),
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -54,7 +54,7 @@ class _CreateTrajetState extends State<CreateTrajet> {
                         style: GoogleFonts.poppins(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black54
+                            color: Colors.white
                         ),
                       ),
                     ),

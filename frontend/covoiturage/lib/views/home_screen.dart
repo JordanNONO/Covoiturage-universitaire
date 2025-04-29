@@ -306,9 +306,9 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const SizedBox(width: 8),
-            _buildReservationOption("Business", 'assets/images/business.png'),
+            _buildReservationOption("Business", 'assets/business.png'),
             const SizedBox(width: 16),
-            _buildReservationOption("Master", 'assets/images/vip.png'),
+            _buildReservationOption("Master", 'assets/vip.png'),
             const SizedBox(width: 16),
             _buildReservationOption("Premium", null, icon: Icons.star_border),
             const SizedBox(width: 8),
