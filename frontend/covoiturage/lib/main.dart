@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.onboardingRoute, // Utilisez la constante de route
       getPages: AppRoutes.all, // Utilisez la liste des routes
       theme: ThemeData(
-        primarySwatch: Colors.green, // Ajout d'une couleur principale
+        primarySwatch: Colors.purple, // Ajout d'une couleur principale
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
         ),
